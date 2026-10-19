@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viajes de Nerea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3A3158;--soft:#7A7399;--line:#EDE8F7;--violet:#C9BCFA;--violet2:#B6A6F5;--display:"Fredoka","Trebuchet MS",system-ui,sans-serif;--body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;margin:0}
+html{min-height:100%}
+body{font-family:var(--body);color:var(--ink);min-height:100vh;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);overflow-x:hidden;
+ background:linear-gradient(160deg,#FFE9DC 0%,#FFD9EA 28%,#E6DCFF 58%,#D3EBFF 82%,#D8F6E8 100%) fixed}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #8E7BEA;outline-offset:2px}
+[hidden]{display:none!important}
+
+/* FONDO DE VIAJE */
+.sky{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.cloud{position:absolute;width:150px;height:46px;background:#fff;border-radius:99px;opacity:.75;animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:60px;height:60px;left:26px;top:-30px}.cloud::after{width:80px;height:80px;left:62px;top:-42px}
+.cloud:nth-child(1){top:12%;animation-duration:90s;animation-delay:-30s}
+.cloud:nth-child(2){top:46%;transform:scale(.7);animation-duration:120s;animation-delay:-80s}
+.cloud:nth-child(3){top:74%;transform:scale(1.2);animation-duration:150s;animation-delay:-10s}
+@keyframes drift{from{left:-240px}to{left:110%}}
+.plane{position:absolute;font-size:2rem;top:22%;left:-60px;animation:fly 38s linear infinite;filter:drop-shadow(0 6px 6px #7a73992a)}
+@keyframes fly{0%{left:-60px;top:30%;transform:rotate(-8deg)}100%{left:105%;top:6%;transform:rotate(-8deg)}}
+.float{position:absolute;font-size:2.2rem;opacity:.35;animation:bob 7s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-16px) rotate(6deg)}}
+
+/* ESTRUCTURA */
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:44px 22px 60px}
+header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(2.2rem,7vw,3.6rem);letter-spacing:-.01em;line-height:1}
+.sub{color:var(--soft);margin-top:8px;max-width:40ch}
+.btn{border:0;cursor:pointer;border-radius:99px;padding:12px 22px;font-weight:700;background:var(--violet);color:var(--ink);box-shadow:0 6px 0 #A89AE6;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #A89AE6}
+.btn.ghost{background:#fff;box-shadow:0 6px 0 var(--line)}
+.btn.danger{background:#FFD1D1;box-shadow:0 6px 0 #EFB4B4}
+.demo{margin-top:16px;font-size:.85rem;background:#FFF6BF;border-radius:12px;padding:8px 14px;display:inline-block}
+
+/* VACÍO */
+.empty{text-align:center;padding:70px 10px}
+.empty .globe{font-size:6rem;display:inline-block;animation:bob 6s ease-in-out infinite}
+.empty h2{font-family:var(--display);font-weight:600;font-size:1.7rem;margin:14px 0 6px}
+.empty p{color:var(--soft);margin-bottom:24px}
+
+/* ÁLBUMES */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:22px;margin-top:38px}
+.card{display:block;width:100%;text-align:left;border:0;cursor:pointer;border-radius:26px;padding:22px;min-height:190px;background:var(--c);
+ box-shadow:0 8px 0 #0000000d;transition:transform .2s;animation:pop .5s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(var(--i)*70ms)}
+.card:hover{transform:translateY(-6px) rotate(-1deg)}
+@keyframes pop{from{opacity:0;transform:scale(.7) translateY(20px)}}
+.card .e{font-size:3.2rem;line-height:1;display:block;margin-bottom:26px}
+.card b{font-family:var(--display);font-weight:600;font-size:1.3rem;display:block}
+.card span{color:#5B5478;font-size:.9rem}
+
+/* ÁLBUM ABIERTO */
+.back{background:none;border:0;cursor:pointer;color:var(--soft);font-weight:700;margin-bottom:18px;padding:4px 0}
+.banner{background:var(--c);border-radius:30px;padding:clamp(26px,5vw,52px)}
+.banner .e{font-size:4rem;line-height:1}
+.banner h1{margin-top:10px}.banner p{color:#5B5478;margin-top:6px}
+.acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.soon{margin-top:26px;border:3px dashed #fff;border-radius:26px;padding:46px 20px;text-align:center;color:var(--soft);background:#ffffff66}
+
+/* MODALES */
+dialog{border:0;border-radius:28px;padding:0;width:min(440px,calc(100vw - 28px));max-height:92vh;color:var(--ink);box-shadow:0 30px 80px #3a315855;overflow:hidden}
+dialog[open]{animation:in .25s cubic-bezier(.3,1.4,.5,1);display:flex;flex-direction:column}
+dialog::backdrop{background:#3a31588c;backdrop-filter:blur(3px)}
+@keyframes in{from{opacity:0;transform:scale(.92) translateY(14px)}}
+.mh{padding:22px 24px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+.mh h3{font-family:var(--display);font-weight:600;font-size:1.35rem}.mh p{color:var(--soft);font-size:.9rem}
+.x{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer}
+.mb{padding:18px 24px;overflow:auto}
+label{display:block;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);font-weight:700;margin:16px 0 8px}
+label:first-child{margin-top:0}
+.emojis{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;background:#F8F5FD;border:1px solid var(--line);border-radius:18px;padding:10px;max-height:210px;overflow:auto}
+.emojis button{aspect-ratio:1;border:2px solid transparent;border-radius:12px;background:#fff;cursor:pointer;font-size:1.25rem;transition:transform .1s}
+.emojis button:hover{transform:scale(1.15)}
+.emojis button[aria-pressed=true]{background:#DDD3FF;border-color:#8E7BEA}
+input,select{width:100%;padding:13px 15px;border-radius:14px;border:1px solid var(--line);background:#F8F5FD}
+.mf{padding:14px 24px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:12px;align-items:center}
+.mf .btn{padding:11px 22px}.link{background:none;border:0;cursor:pointer;color:var(--soft);font-weight:700}
+.err{color:#B3404A;font-size:.85rem;margin-top:10px;min-height:1.2em}
+footer{position:relative;z-index:1;text-align:center;padding:0 0 30px;font-size:.85rem}
+footer button{background:none;border:0;cursor:pointer;color:var(--soft);text-decoration:underline}
+.upst{margin-top:12px;font-weight:700;color:var(--soft);min-height:1.2em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:26px}
+.tile{position:relative;aspect-ratio:1;border:0;padding:0;border-radius:18px;overflow:hidden;cursor:pointer;background:#fff;transition:transform .15s}
+.tile:hover{transform:scale(1.03)}
+.tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block}
+.play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:#fffd;display:grid;place-items:center;font-size:.8rem}
+#dView{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border-radius:0;background:#000;color:#fff;box-shadow:none}
+#dView[open]{display:block;animation:none}
+#vBox{position:absolute;inset:0;display:grid;place-items:center;touch-action:pan-y;overflow:hidden}
+#vBox img{width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+#vBox video{width:100%;height:auto;max-height:calc(100dvh - 130px)}
+.inR{animation:inR .28s ease}.inL{animation:inL .28s ease}
+@keyframes inR{from{opacity:0;transform:translateX(60px)}}
+@keyframes inL{from{opacity:0;transform:translateX(-60px)}}
+.vtop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;background:linear-gradient(#000a,#0000);z-index:2;font-weight:700}
+.vx{width:42px;height:42px;border-radius:50%;border:0;background:#ffffff26;color:#fff;font-size:1.1rem;cursor:pointer}
+.vnav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:#ffffff26;color:#fff;font-size:1.8rem;cursor:pointer;z-index:2}
+.vnav.l{left:14px}.vnav.r{right:14px}
+@media (hover:none){.vnav{display:none}}
+.vact{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;flex-wrap:wrap;gap:12px;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 18px);background:linear-gradient(#0000,#000a);z-index:2}
+.vact .btn{padding:9px 18px;box-shadow:none}
+.card.hasc{background:linear-gradient(0deg,#2a2144d9,#2a214400 62%),var(--img) center/cover,var(--c);color:#fff}
+.card.hasc span:not(.e){color:#fff}
+.card.hasc .e{width:46px;height:46px;border-radius:14px;background:#ffffffe6;display:grid;place-items:center;font-size:1.7rem;margin-bottom:70px}
+.banner.hasc{background:linear-gradient(0deg,#2a2144e6,#2a214455),var(--img) center/cover,var(--c);color:#fff;min-height:320px;display:flex;flex-direction:column;justify-content:flex-end}
+.banner.hasc p{color:#fff}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+  <div class="plane">✈️</div>
+  <div class="float" style="left:8%;top:62%">🧳</div>
+  <div class="float" style="right:10%;top:18%;animation-delay:-2s">🗺️</div>
+  <div class="float" style="right:18%;bottom:10%;animation-delay:-4s">🌴</div>
+  <div class="float" style="left:42%;bottom:6%;animation-delay:-1s">📷</div>
+</div>
+
+<main class="wrap">
+  <section id="home">
+    <header>
+      <div><h1 id="t"></h1><p class="sub" id="st"></p></div>
+      <button class="btn" id="add">＋ Añadir país</button>
+    </header>
+    <div class="demo" id="demo" hidden>Modo prueba: los álbumes solo se guardan en este navegador.</div>
+    <div id="list"></div>
+  </section>
+
+  <section id="album" hidden>
+    <button class="back" id="back">&larr; Todos los viajes</button>
+    <div class="banner" id="banner"></div>
+    <div class="upst" id="up"></div>
+    <div id="gal"></div>
+  </section>
+</main>
+<footer><button id="auth"></button></footer>
+
+<!-- Nuevo álbum -->
+<dialog id="dNew">
+  <div class="mh"><div><h3>Nuevo álbum</h3><p>Un emoji, un nombre y el país. Los tres.</p></div><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <div class="mb">
+    <label>Emoji del álbum</label><div class="emojis" id="emojis"></div>
+    <label for="nm">Nombre del álbum</label><input id="nm" maxlength="40" placeholder="Ej: Pekín, Verano en la costa…" autocomplete="off">
+    <label for="co">País</label><select id="co"></select>
+    <div class="err" id="e1"></div>
+  </div>
+  <div class="mf"><button class="link" data-close>Cancelar</button><button class="btn" id="create">Crear álbum</button></div>
+</dialog>
+
+<!-- Visor -->
+<dialog id="dView">
+  <div id="vBox"></div>
+  <div class="vtop"><span id="vN"></span><button class="vx" data-close aria-label="Cerrar">✕</button></div>
+  <button class="vnav l" id="vPrev" aria-label="Anterior">‹</button>
+  <button class="vnav r" id="vNext" aria-label="Siguiente">›</button>
+  <div class="vact">
+    <button class="btn ghost" id="vCover" hidden>⭐ Usar de portada</button>
+    <button class="btn danger" id="vDel" hidden>Eliminar</button>
+  </div>
+</dialog>
+
+<!-- Confirmación y avisos -->
+<dialog id="dAsk">
+  <div class="mh"><h3 id="aT"></h3></div>
+  <div class="mb"><p id="aP" style="word-break:break-all"></p></div>
+  <div class="mf"><button class="link" id="aNo">Cancelar</button><button class="btn" id="aYes"></button></div>
+</dialog>
+
+<!-- Acceso -->
+<dialog id="dLogin">
+  <div class="mh"><div><h3>Solo para ti ✨</h3><p>Entra para poder añadir y borrar álbumes.</p></div><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <div class="mb">
+    <label for="em">Correo</label><input id="em" type="email" autocomplete="username">
+    <label for="pw">Contraseña</label><input id="pw" type="password" autocomplete="current-password">
+    <div class="err" id="e2"></div>
+  </div>
+  <div class="mf"><button class="link" data-close>Cancelar</button><button class="btn" id="go">Entrar</button></div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ================== CONFIGURACIÓN ==================
+   Déjalo vacío para probar (modo prueba, se guarda solo en tu navegador).
+   Para que sea real, pega aquí los datos de tu proyecto Supabase. */
+const TITULO = "Viajes de Nerea";
+const SUBTITULO = "Cada rincón del mundo que he pisado.";
+const SUPABASE_URL = "https://bpzmayklngoyvzruzeul.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ryNVqfY9gLUXrj7LHXAnpQ_WdTRQFnR";
+/* =================================================== */
+
+const $ = s => document.querySelector(s);
+const h = (t, p = {}, ...k) => { const e = Object.assign(document.createElement(t), p); k.forEach(x => e.append(x)); return e; };
+const PASTEL = ["#FFD9D9","#FFE8C7","#FFF3B8","#D8F3DC","#CDEFF5","#D6E4FF","#E4D9FF","#F8D8F0"];
+const EMOJIS = "📷 ✈️ 🌍 🌎 🌏 🗺️ 🧳 🏖️ 🏔️ 🏝️ 🏕️ 🏙️ 🗼 🗽 🗾 ⛩️ 🏰 ⛰️ 🌋 🏜️ 🌅 🌆 🚗 🚂 🚢 🛶 🎡 🎢 🍹 🍜 ❤️ ⭐".split(" ");
+EMOJIS.push(..."🏯 🕌 🕍 🛕 🏛️ 🗿 🏟️ 🌉 ⛪ 🕋 🛖 🌃 🌄 🌈 ❄️ 🌴 🌵 🍁 🌸 🌷 🌻 🐼 🦘 🐨 🐘 🦁 🐫 🦒 🐧 🦅 🐯 🐢 🐬 🦜 🦙 🐻 🦌 🐊 🦩 🍕 🍝 🥐 🥖 🌮 🌯 🍣 🍱 🥘 🍷 🍺 🧀 🍫 🍦 🥟 🍛 🥙 🧆 🍩 ☕ 🥑 🌶️ 🍍 🥥 🍔 🍟 🥨 🍰 💃 🎭 🎸 🥁 🎻 ⚽ 🏄 ⛷️ 🤿 🚲 ⛵ 🚁 🏺 ✨".split(" "));
+const CODES = "AF AL DE AD AO AG SA DZ AR AM AU AT AZ BS BH BD BB BE BZ BJ BY BO BA BW BR BN BG BF BI BT CV KH CM CA QA TD CL CN CY CO KM CG CD KP KR CI CR HR CU DK DJ DM EC EG SV AE ER SK SI ES US EE SZ ET RU FJ PH FI FR GA GM GE GH GD GR GT GN GQ GW GY HT HN HU IN ID IQ IR IE IS MH SB IL IT JM JP JO KZ KE KG KI XK KW LA LS LV LB LR LY LI LT LU MK MG MY MW MV ML MT MA MU MR MX FM MD MC MN ME MZ MM NA NR NP NI NE NG NO NZ OM NL PK PW PA PG PY PE PL PT GB CF CZ DO RW RO WS KN SM VC LC ST SN RS SC SL SG SY SO LK ZA SD SS SE CH SR TH TZ TJ TL TG TO TT TN TR TM TV UA UG UY UZ VU VA VE VN YE ZM ZW PS TW HK MO PR GL GI VG KY AW CW GP MQ RE PF NC GU".split(" ");
+let names; try { names = new Intl.DisplayNames(["es"], { type: "region" }); } catch { names = { of: c => c }; }
+const country = c => { try { return names.of(c) || c; } catch { return c; } };
+const flag = c => String.fromCodePoint(...[...c].map(x => 127397 + x.charCodeAt(0)));
+const colorOf = id => PASTEL[[...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0) % PASTEL.length];
+
+// ---------- Almacenamiento: Supabase o modo prueba ----------
+const LIVE = !!(SUPABASE_URL && SUPABASE_KEY && window.supabase);
+const sb = LIVE ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+let albums = [], logged = !LIVE, pick = EMOJIS[0], pendingAdd = false, touched = false;
+const KEY = "albumes-demo";
+const store = {
+  async list(){
+    if (!LIVE){ try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+    const { data } = await sb.from("albums").select("*").order("created_at"); return data || [];
+  },
+  async add(a){
+    if (!LIVE){ a.id = Date.now().toString(36); albums.push(a); try { localStorage.setItem(KEY, JSON.stringify(albums)); } catch {} return; }
+    const { data, error } = await sb.from("albums").insert(a).select().single();
+    if (error) throw error; albums.push(data);
+  },
+  async del(id){
+    if (!LIVE){ albums = albums.filter(a => a.id !== id); try { localStorage.setItem(KEY, JSON.stringify(albums)); } catch {} return; }
+    const { data: ms } = await sb.from("media").select("path").eq("album_id", id);
+    const { data, error } = await sb.from("albums").delete().eq("id", id).select();
+    if (!error && data && data.length && ms && ms.length) await sb.storage.from(BUCKET).remove(ms.map(m => m.path));
+    if (error || !data || !data.length) throw error || new Error("sin permiso");
+    albums = albums.filter(a => a.id !== id);
+  }
+};
+function ask(title, text, ok = "Aceptar", cancel = true){
+  return new Promise(res => {
+    const d = $("#dAsk"); $("#aT").textContent = title; $("#aP").textContent = text;
+    $("#aYes").textContent = ok; $("#aNo").hidden = !cancel;
+    const done = v => { d.close(); res(v); };
+    $("#aYes").onclick = () => done(true); $("#aNo").onclick = () => done(false);
+    d.oncancel = () => res(false);
+    d.showModal();
+  });
+}
+
+// ---------- Vistas ----------
+function renderHome(){
+  const box = $("#list"); box.replaceChildren();
+  if (!albums.length){
+    box.append(h("div", { className: "empty" },
+      h("div", { className: "globe", textContent: "🌍" }),
+      h("h2", { textContent: "Aquí aún no hay ningún viaje" }),
+      h("p", { textContent: "Cuando se añada el primer país, aparecerá aquí." }),
+      h("button", { className: "btn", textContent: "＋ Añadir el primer país", onclick: openAdd })));
+    return;
+  }
+  const g = h("div", { className: "grid" });
+  albums.forEach((a, i) => {
+    const c = h("button", { className: "card", onclick: () => location.hash = a.id },
+      h("span", { className: "e", textContent: a.emoji }), h("b", { textContent: a.name }),
+      h("span", { textContent: flag(a.country) + " " + country(a.country) }));
+    c.style.setProperty("--c", colorOf(a.id)); c.style.setProperty("--i", i);
+    const u = coverUrl(a); if (u){ c.classList.add("hasc"); c.style.setProperty("--img", 'url("' + u + '")'); }
+    g.append(c);
+  });
+  box.append(g);
+}
+function renderAlbum(a){
+  const b = $("#banner"); b.style.setProperty("--c", colorOf(a.id));
+  const cu = coverUrl(a); b.classList.toggle("hasc", !!cu); b.style.setProperty("--img", cu ? 'url("' + cu + '")' : "none");
+  const copy = h("button", { className: "btn ghost", textContent: "🔗 Copiar enlace para el NFC" });
+  copy.onclick = async () => {
+    const url = location.href.split("#")[0] + "#" + a.id;
+    try { await navigator.clipboard.writeText(url); copy.textContent = "✓ Enlace copiado"; } catch { ask("Copia este enlace", url, "Vale", false); }
+  };
+  const acts = h("div", { className: "acts" }, copy);
+  if (logged) acts.append(h("button", { className: "btn danger", textContent: "Eliminar álbum", onclick: async () => {
+    if (!await ask("¿Eliminar el álbum?", a.name + " se borrará para siempre.", "Eliminar")) return;
+    try { await store.del(a.id); location.hash = ""; route(); }
+    catch { ask("No se pudo eliminar", "Comprueba que has iniciado sesión y que en Supabase existe la política de borrado.", "Vale", false); }
+  }}));
+  if (logged){
+    const file = h("input", { type: "file", multiple: true, accept: "image/*,video/*", hidden: true });
+    file.onchange = () => { if (file.files.length) upload(a, [...file.files]); file.value = ""; };
+    acts.prepend(file, h("button", { className: "btn", textContent: "＋ Subir fotos y vídeos", onclick: () => file.click() }));
+  }
+  curAlbum = a;
+  b.replaceChildren(h("div", { className: "e", textContent: a.emoji }), h("h1", { textContent: a.name }),
+    h("p", { textContent: flag(a.country) + " " + country(a.country) }), acts);
+  $("#gal").replaceChildren();
+  loadGallery(a);
+}
+function route(){
+  const a = albums.find(x => x.id === decodeURIComponent(location.hash.slice(1)));
+  $("#home").hidden = !!a; $("#album").hidden = !a;
+  document.title = a ? a.name + " · " + TITULO : TITULO;
+  window.scrollTo(0, 0);
+  a ? renderAlbum(a) : renderHome();
+}
+
+// ---------- Nuevo álbum ----------
+function openAdd(){
+  if (!logged){ pendingAdd = true; $("#e2").textContent = ""; $("#dLogin").showModal(); return; }
+  $("#nm").value = ""; $("#e1").textContent = ""; $("#co").value = ""; $("#flagBtn").hidden = true;
+  touched = false; pick = EMOJIS[0];
+  document.querySelectorAll("#emojis button").forEach(x => x.setAttribute("aria-pressed", x.textContent === pick));
+  $("#dNew").showModal(); $("#nm").focus();
+}
+function buildForm(){
+  const box = $("#emojis");
+  const choose = b => { pick = b.textContent; box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); };
+  const fb = h("button", { type: "button", id: "flagBtn", hidden: true, ariaLabel: "Bandera del país" });
+  fb.onclick = () => { touched = true; choose(fb); };
+  box.append(fb);
+  EMOJIS.forEach(e => {
+    const b = h("button", { type: "button", textContent: e, ariaLabel: "Emoji " + e });
+    b.setAttribute("aria-pressed", e === pick);
+    b.onclick = () => { touched = true; choose(b); };
+    box.append(b);
+  });
+  $("#co").onchange = () => {
+    const c = $("#co").value; fb.hidden = !c; if (!c) return;
+    fb.textContent = flag(c); if (!touched) choose(fb);
+  };
+  const opts = CODES.map(c => [c, country(c)]).sort((x, y) => x[1].localeCompare(y[1], "es"));
+  const sel = $("#co"); sel.append(h("option", { value: "", textContent: "Elige un país…" }));
+  opts.forEach(([c, n]) => sel.append(h("option", { value: c, textContent: n })));
+}
+$("#create").onclick = async () => {
+  const name = $("#nm").value.trim(), co = $("#co").value;
+  if (!name || !co){ $("#e1").textContent = "Falta el nombre o el país."; return; }
+  try { await store.add({ emoji: pick, name, country: co }); $("#dNew").close(); $("#co").value = ""; route(); }
+  catch { $("#e1").textContent = "No se pudo guardar. ¿Has iniciado sesión?"; }
+};
+
+// ---------- Fotos y vídeos ----------
+const BUCKET = "recuerdos", MAX_MB = 50;
+let items = [], cur = 0, curAlbum = null, demoMedia = {};
+const urlOf = p => sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl;
+function coverUrl(a){ const p = a.cover_path; return !p ? "" : /^(blob|https?):/.test(p) ? p : urlOf(p); }
+
+async function listMedia(id){
+  if (!LIVE) return demoMedia[id] || [];
+  const { data } = await sb.from("media").select("*").eq("album_id", id).order("created_at");
+  return (data || []).map(m => ({ ...m, url: urlOf(m.path) }));
+}
+async function shrink(f){ // reduce las fotos a 1920 px para que quepan muchas en el plan gratuito
+  if (!f.type.startsWith("image/") || f.type === "image/gif") return f;
+  try {
+    const bmp = await createImageBitmap(f), k = Math.min(1, 1920 / Math.max(bmp.width, bmp.height));
+    const c = h("canvas", { width: Math.round(bmp.width * k), height: Math.round(bmp.height * k) });
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    const blob = await new Promise(r => c.toBlob(r, "image/jpeg", .82));
+    return blob && blob.size < f.size ? blob : f;
+  } catch { return f; }
+}
+async function upload(a, files){
+  const st = $("#up"), fail = [];
+  for (let i = 0; i < files.length; i++){
+    const f = files[i], vid = f.type.startsWith("video/");
+    st.textContent = "Subiendo " + (i + 1) + " de " + files.length + "…";
+    if (!vid && !f.type.startsWith("image/")){ fail.push(f.name); continue; }
+    if (vid && f.size > MAX_MB * 1048576){ fail.push(f.name + " (más de " + MAX_MB + " MB)"); continue; }
+    try {
+      const body = vid ? f : await shrink(f);
+      if (!LIVE){ (demoMedia[a.id] = demoMedia[a.id] || []).push({ id: Math.random().toString(36).slice(2), url: URL.createObjectURL(body), kind: vid ? "video" : "image" }); continue; }
+      const ext = body === f ? (f.name.split(".").pop() || "bin").toLowerCase() : "jpg";
+      const path = a.id + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 7) + "." + ext;
+      const up = await sb.storage.from(BUCKET).upload(path, body, { contentType: body.type || f.type, cacheControl: "31536000" });
+      if (up.error) throw up.error;
+      const ins = await sb.from("media").insert({ album_id: a.id, path, kind: vid ? "video" : "image" });
+      if (ins.error) throw ins.error;
+    } catch { fail.push(f.name); }
+  }
+  st.textContent = ""; await loadGallery(a);
+  if (fail.length) ask("Algunos archivos no se subieron", fail.join(", "), "Vale", false);
+}
+async function loadGallery(a){
+  const list = await listMedia(a.id), g = $("#gal");
+  if (!g || curAlbum !== a) return;
+  items = list; g.replaceChildren();
+  if (!items.length){ g.append(h("div", { className: "soon", textContent: logged ? "📸 Sube las primeras fotos y vídeos de este viaje." : "📸 Todavía no hay recuerdos en este álbum." })); return; }
+  const grid = h("div", { className: "tiles" });
+  items.forEach((m, i) => {
+    const t = h("button", { className: "tile", ariaLabel: "Abrir recuerdo " + (i + 1), onclick: () => { cur = i; showView(); if (!$("#dView").open) $("#dView").showModal(); } });
+    t.append(m.kind === "video" ? h("video", { src: m.url + "#t=0.1", preload: "metadata", muted: true, playsInline: true }) : h("img", { src: m.url, loading: "lazy", alt: "" }));
+    if (m.kind === "video") t.append(h("span", { className: "play", textContent: "▶" }));
+    grid.append(t);
+  });
+  g.append(grid);
+}
+const keyOf = m => LIVE ? m.path : m.url;
+function showView(dir = 0){
+  const m = items[cur];
+  const el = m.kind === "video" ? h("video", { src: m.url, controls: true, autoplay: true, playsInline: true }) : h("img", { src: m.url, alt: "", draggable: false });
+  if (dir) el.className = dir > 0 ? "inR" : "inL";
+  $("#vBox").replaceChildren(el);
+  $("#vN").textContent = (cur + 1) + " / " + items.length;
+  $("#vDel").hidden = !logged;
+  const cv = $("#vCover"); cv.hidden = !logged || m.kind !== "image";
+  cv.textContent = curAlbum.cover_path === keyOf(m) ? "✓ Es la portada (quitar)" : "⭐ Usar de portada";
+  document.querySelectorAll(".vnav").forEach(b => b.hidden = items.length < 2);
+}
+const step = d => { if (items.length < 2) return; cur = (cur + d + items.length) % items.length; showView(d); };
+$("#vPrev").onclick = () => step(-1); $("#vNext").onclick = () => step(1);
+// Deslizar con el dedo (izquierda = siguiente, derecha = anterior)
+let sx = 0, sy = 0, skip = false;
+$("#vBox").addEventListener("touchstart", e => {
+  const t = e.touches[0]; sx = t.clientX; sy = t.clientY;
+  const v = e.target.closest && e.target.closest("video"); skip = !!v && sy > v.getBoundingClientRect().bottom - 70;
+}, { passive: true });
+$("#vBox").addEventListener("touchend", e => {
+  if (skip) return;
+  const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) step(dx < 0 ? 1 : -1);
+}, { passive: true });
+$("#vCover").onclick = async () => {
+  const m = items[cur], val = curAlbum.cover_path === keyOf(m) ? null : keyOf(m);
+  try {
+    if (LIVE){
+      const { data, error } = await sb.from("albums").update({ cover_path: val }).eq("id", curAlbum.id).select();
+      if (error || !data || !data.length) throw error || new Error("sin permiso");
+    }
+    curAlbum.cover_path = val; showView(); renderAlbum(curAlbum);
+  } catch { ask("No se pudo cambiar la portada", "Ejecuta el SQL nuevo de Supabase (supabase-portada.sql) y comprueba que has iniciado sesión.", "Vale", false); }
+};
+$("#dView").onclose = () => $("#vBox").replaceChildren();
+addEventListener("keydown", e => { if ($("#dView").open && items.length){ if (e.key === "ArrowRight") step(1); if (e.key === "ArrowLeft") step(-1); } });
+$("#vDel").onclick = async () => {
+  const m = items[cur];
+  if (!await ask("¿Eliminar este recuerdo?", "Se borrará para siempre.", "Eliminar")) return;
+  try {
+    if (!LIVE) demoMedia[curAlbum.id] = (demoMedia[curAlbum.id] || []).filter(x => x.id !== m.id);
+    else {
+      const { data, error } = await sb.from("media").delete().eq("id", m.id).select();
+      if (error || !data || !data.length) throw error || new Error("sin permiso");
+      await sb.storage.from(BUCKET).remove([m.path]);
+    }
+    const wasCover = curAlbum.cover_path === keyOf(m);
+    if (wasCover){
+      if (LIVE) await sb.from("albums").update({ cover_path: null }).eq("id", curAlbum.id);
+      curAlbum.cover_path = null;
+    }
+    await loadGallery(curAlbum);
+    if (wasCover) renderAlbum(curAlbum);
+    if (!items.length) $("#dView").close(); else { cur = Math.min(cur, items.length - 1); showView(); }
+  } catch { ask("No se pudo eliminar", "Comprueba que has iniciado sesión y que has ejecutado el SQL de Supabase.", "Vale", false); }
+};
+
+// ---------- Acceso ----------
+function paintAuth(){
+  const b = $("#auth");
+  b.hidden = !LIVE;
+  b.textContent = logged ? "Cerrar sesión" : "Acceso";
+  b.onclick = async () => { if (logged){ await sb.auth.signOut(); } else { pendingAdd = false; $("#e2").textContent = ""; $("#dLogin").showModal(); } };
+}
+$("#go").onclick = async () => {
+  const err = $("#e2"); err.textContent = "Entrando…";
+  try {
+    const { error } = await sb.auth.signInWithPassword({ email: $("#em").value.trim(), password: $("#pw").value });
+    if (error){
+      err.textContent = /invalid login/i.test(error.message) ? "Correo o contraseña incorrectos."
+        : /not confirmed/i.test(error.message) ? "El correo no está confirmado en Supabase."
+        : "Error: " + error.message;
+      return;
+    }
+    err.textContent = ""; $("#dLogin").close();
+  } catch (e) { err.textContent = "No se pudo conectar con Supabase: " + (e && e.message || e); }
+};
+
+document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
+$("#back").onclick = () => location.hash = "";
+$("#add").onclick = openAdd;
+addEventListener("hashchange", route);
+
+(async function init(){
+  $("#t").textContent = TITULO; $("#st").textContent = SUBTITULO; $("#demo").hidden = LIVE;
+  buildForm();
+  if (LIVE){
+    const { data } = await sb.auth.getSession(); logged = !!data.session;
+    sb.auth.onAuthStateChange((_e, s) => { logged = !!s; paintAuth(); route(); if (logged && pendingAdd){ pendingAdd = false; openAdd(); } });
+  }
+  paintAuth(); albums = await store.list(); route();
+})();
+</script>
+</body>
+</html>
